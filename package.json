@@ -1,0 +1,29 @@
+{
+  "name": "parkme-engine",
+  "version": "1.0.0",
+  "description": "Backend for Parkme app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sirohiwebdev/parkme-engine.git"
+  },
+  "keywords": [
+    "Park",
+    "Me",
+    "app"
+  ],
+  "author": "Abhishek Sirohi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sirohiwebdev/parkme-engine/issues"
+  },
+  "homepage": "https://github.com/sirohiwebdev/parkme-engine#readme",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.7"
+  }
+}
