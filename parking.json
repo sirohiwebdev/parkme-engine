@@ -1,0 +1,38 @@
+{
+  "_id": { "$oid": "5e88584c2f48f016967bba82" },
+  "location": {
+    "address": {
+      "street": "123 Street",
+      "zipcode": { "$numberInt": "123456" }
+    },
+    "coordinates": [{ "$numberInt": "0" }, { "$numberInt": "1" }]
+  },
+  "lots": [
+    {
+      "A": [
+        [
+          { "$numberInt": "1" },
+          { "$numberInt": "0" },
+          { "$numberInt": "0" },
+          { "$numberInt": "1" },
+          { "$numberInt": "1" }
+        ],
+        [
+          { "$numberInt": "1" },
+          { "$numberInt": "1" },
+          { "$numberInt": "0" },
+          { "$numberInt": "1" },
+          { "$numberInt": "1" }
+        ]
+      ]
+    }
+  ],
+  "name": "Shive Parking",
+  "hours": {
+    "start": { "$date": { "$numberLong": "1585993804001" } },
+    "end": { "$date": { "$numberLong": "1585993804001" } }
+  },
+  "open": true,
+  "fare": { "whlr2": { "$numberInt": "20" }, "whlr4": { "$numberInt": "40" } },
+  "__v": { "$numberInt": "0" }
+}
