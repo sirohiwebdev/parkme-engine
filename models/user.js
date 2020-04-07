@@ -8,7 +8,8 @@ const userSchema = mongoose.Schema({
     unique: true,
     maxLength: 10
   },
-  vehicle_no: String
+  vehicle_no: String,
+  password: { type: String, required: true }
 });
 
 const createUser = async user => {
