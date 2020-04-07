@@ -24,7 +24,7 @@ Router.post("/", (req, res, next) => {
     .then(user => {
       if (!user) {
         return res.status(400).json({
-          STATUS: "ERROR",
+          status: "ERROR",
           error: "User not found."
         });
       }
@@ -33,19 +33,19 @@ Router.post("/", (req, res, next) => {
 
       if (hashPasswordGet === password) {
         return res.status(200).json({
-          STATUS: "SUCCESS",
+          status: "SUCCESS",
           data: user
         });
       } else {
         return res.status(400).json({
-          STATUS: "ERROR",
+          status: "ERROR",
           error: "Invalid Credentials"
         });
       }
     })
     .catch(error => {
       console.log(error);
-      res.status(400).json({ STATUS: "ERROR", error: error });
+      res.status(400).json({ status: "ERROR", error: error });
     });
 });
 
