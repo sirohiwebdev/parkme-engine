@@ -23,6 +23,12 @@ Router.post("/", (req, res, next) => {
   User.getUser(mobile)
     .then(user => {
       const { password } = user;
+      if (!user) {
+        return res.status(400).json({
+          STATUS: "ERROR",
+          error: "User not found."
+        });
+      }
 
       if (hashPasswordGet === password) {
         return res.status(200).json({
