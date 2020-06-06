@@ -3,6 +3,8 @@ const Router = express.Router();
 const User = require("../models/user");
 const Parking = require("../models/parking");
 const createHash = require("../lib/hashing").createHash;
+const JWT = require("../jwt");
+const mongoose = require("mongoose");
 
 Router.post("/user", (req, res, next) => {
   const { mobile, password } = req.body;
@@ -19,9 +21,9 @@ Router.post("/user", (req, res, next) => {
   }
 
   hashPasswordGet = createHash(password);
-  // console.log("GET", hashPasswordGet);
 
-  User.getUser(mobile)
+  //Get user with mobile and validate its password
+  User.getUser({ mobile: mobile, password: hashPasswordGet })
     .then(user => {
       if (!user) {
         return res.status(402).json({
@@ -30,19 +32,13 @@ Router.post("/user", (req, res, next) => {
         });
       }
 
-      const { password } = user;
+      const token = JWT.createJWTAuth(user);
+      const { password, ...restUserData } = user;
 
-      if (hashPasswordGet === password) {
-        return res.status(200).json({
-          status: "SUCCESS",
-          data: user
-        });
-      } else {
-        return res.status(402).json({
-          status: "ERROR",
-          error: "Invalid Credentials"
-        });
-      }
+      return res.status(200).json({
+        status: "SUCCESS",
+        data: { ...restUserData, token }
+      });
     })
     .catch(error => {
       console.log(error);
@@ -74,9 +70,13 @@ Router.post("/parking", (req, res) => {
       const { password } = parking;
 
       if (hashPasswordGet === password) {
+        const token = JWT.createJWTAuth(parking);
+
+        const { password, ...restParkingDetails } = parking;
+
         return res.status(200).json({
           status: "SUCCESS",
-          data: parking
+          data: { ...restParkingDetails, token }
         });
       } else {
         return res.status(402).json({

@@ -15,18 +15,6 @@ Router.get("/", (req, res) => {
     });
 });
 
-Router.post("/", (req, res) => {
-  req.body.password = createHash(req.body.password);
-  console.log(req.body);
-  User.createUser(req.body)
-    .then(user => {
-      res.json({ status: status.SUCCESS, data: user });
-    })
-    .catch(err => {
-      res.json({ status: status.ERROR, error: err });
-    });
-});
-
 Router.put("/", (req, res) => {
   const { id } = req.body;
   User.updateUser(id, req.body)

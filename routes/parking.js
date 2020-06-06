@@ -27,18 +27,6 @@ Router.get("/:id?", (req, res) => {
   }
 });
 
-Router.post("/", (req, res) => {
-  req.body.password = createHash(req.body.password);
-  const parking = req.body;
-  Parking.addParking(parking)
-    .then(user => {
-      res.json({ status: status.SUCCESS, data: user });
-    })
-    .catch(err => {
-      res.json({ status: status.ERROR, error: err });
-    });
-});
-
 Router.put("/", (req, res) => {
   if (req.body.password) {
     req.body.password = createHash(req.body.password);

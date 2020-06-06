@@ -17,17 +17,17 @@ const createUser = async user => {
   return await newUser.save();
 };
 
-const getUser = async mobile => {
-  if (mobile) return await User.findOne({ mobile });
+const getUser = async data => {
+  if (data) return await User.findOne(data).lean();
 
-  return await User.find();
+  return await User.find().lean();
 };
 
 const updateUser = async (userId, data) => {
-  return await User.findByIdAndUpdate({ _id: userId }, data);
+  return await User.findByIdAndUpdate({ _id: userId }, data).lean();
 };
 const deleteUser = async userId => {
-  return await User.findByIdAndDelete({ _id: userId });
+  return await User.findByIdAndDelete({ _id: userId }).lean();
 };
 
 const User = mongoose.model("User", userSchema);

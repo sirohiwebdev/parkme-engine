@@ -82,13 +82,13 @@ const updateParking = async (parkingID, data) => {
 
 const getParking = async (parkingID, mobile) => {
   if (parkingID) {
-    return await Parking.findOne({ _id: parkingID });
+    return await Parking.findOne({ _id: parkingID }).lean();
   }
   if (mobile) {
-    return await Parking.findOne({ mobile: mobile });
+    return await Parking.findOne({ mobile: mobile }).lean();
   }
 
-  return await Parking.find();
+  return await Parking.find().lean();
 };
 
 const getParkingByLocation = async location => {
@@ -97,40 +97,10 @@ const getParkingByLocation = async location => {
       { "location.address.city": location.address.city },
       { "location.address.zipcode": location.address.zipcode }
     ]
-  });
+  }).lean();
 };
 
 const Parking = mongoose.model("Parking", parkingSchema);
-
-// const parkingItem = new Parking({
-//   name: "Shive Parking",
-//   location: {
-//     coordinates: [0, 1],
-//     address: {
-//       street: "123 Street",
-//       city: "Meerut",
-//       state: "Uttar Pradesh",
-//       country: "India",
-//       zipcode: 123456
-//     }
-//   },
-//   hours: {
-//     start: Date.now(),
-//     end: Date.now()
-//   },
-//   open: true,
-//   fare: {
-//     whlr2: 20,
-//     whlr4: 40
-//   },
-//   lots: [
-//     {
-//       A: [1, 0, 0, 1, 1, 1, 1, 0, 1, 1]
-//     }
-//   ]
-// });
-
-// parkingItem.save();
 
 module.exports = {
   getParking,
