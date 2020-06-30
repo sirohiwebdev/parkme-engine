@@ -6,6 +6,7 @@ const userRoute = require("./routes/users");
 const parkingRoute = require("./routes/parking");
 const authRoute = require("./routes/auth");
 const registerRoute = require("./routes/register");
+const routeHandler = require("./routeHandler");
 const verifyJWTAuth = require("./jwt").verifyJWTAuth;
 const port = process.env.PORT || 5000;
 
@@ -22,6 +23,7 @@ app.use("/register", registerRoute);
 app.use("/api", verifyJWTAuth);
 app.use("/api/user", userRoute);
 app.use("/api/parking", parkingRoute);
+app.use(routeHandler);
 
 app.listen(port, () => {
   console.log(`Listening on ${port}`);

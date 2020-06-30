@@ -1,38 +1,8 @@
 const mongoose = require("./index");
-// interface IParking {
-//   name: {
-//     type: String;
-//     required: true;
-//   };
-//   location: {
-//     coordinates: [Number, Number];
-//     address: {
-//       street: String;
-//       zipcode: {
-//         type: Number;
-//         required: true;
-//         minLength: 6;
-//         maxLength: 6;
-//       };
-//     };
-//   };
-//   hours: {
-//     start: Date;
-//     end: Date;
-//   };
-//   open: Boolean;
-//   fare: {
-//     whlr2: Number;
-//     whlr4: Number;
-//   };
-//   lots: [
-//     {
-//       ":id": [[Number]];
-//     }
-//   ];
-// }
+const Schema = mongoose.Schema;
 
-const parkingSchema = mongoose.Schema({
+//Define parking schema
+const parkingSchema = new Schema({
   name: {
     type: String,
     required: true
@@ -41,18 +11,19 @@ const parkingSchema = mongoose.Schema({
   mobile: { type: String, unique: true },
   password: String,
   location: {
-    coordinates: [Number, Number],
-    address: {
-      street: String,
-      city: String,
-      state: String,
-      country: String,
-      zipcode: {
-        type: mongoose.SchemaTypes.Number,
-        required: true,
-        minLength: 6,
-        maxLength: 6
-      }
+    type: { type: String, default: "Point" },
+    coordinates: [Number, Number]
+  },
+  address: {
+    street: String,
+    city: String,
+    state: String,
+    country: String,
+    zipcode: {
+      type: mongoose.SchemaTypes.Number,
+      required: true,
+      minLength: 6,
+      maxLength: 6
     }
   },
   hours: {
@@ -67,19 +38,18 @@ const parkingSchema = mongoose.Schema({
   lots: [{}]
 });
 
+parkingSchema.index({ location: "2dsphere" });
+
+//Create parking Model
+const Parking = mongoose.model("Parking", parkingSchema);
+
+// Add Parking to DB
 const addParking = async parkingData => {
   const newParking = new Parking(parkingData);
   return await newParking.save();
 };
 
-const deleteParking = async parkingID => {
-  return await Parking.findByIdAndDelete(parkingID);
-};
-
-const updateParking = async (parkingID, data) => {
-  return await Parking.findByIdAndUpdate({ _id: parkingID }, data);
-};
-
+// Read Parking Data from DB
 const getParking = async (parkingID, mobile) => {
   if (parkingID) {
     return await Parking.findOne({ _id: parkingID }).lean();
@@ -91,16 +61,32 @@ const getParking = async (parkingID, mobile) => {
   return await Parking.find().lean();
 };
 
-const getParkingByLocation = async location => {
-  return await Parking.find({
-    $or: [
-      { "location.address.city": location.address.city },
-      { "location.address.zipcode": location.address.zipcode }
-    ]
-  }).lean();
+// Update Parking Data
+const updateParking = async (parkingID, data) => {
+  return await Parking.findByIdAndUpdate({ _id: parkingID }, data);
 };
 
-const Parking = mongoose.model("Parking", parkingSchema);
+// Delete Parking from DB
+const deleteParking = async parkingID => {
+  return await Parking.findByIdAndDelete(parkingID);
+};
+
+//Get Nearby parking
+const getParkingByLocation = async (location, radius = 5000) => {
+  console.log("Reached");
+  const query = {
+    ["location"]: {
+      $near: {
+        $maxDistance: radius,
+        $geometry: {
+          type: "Point",
+          coordinates: location
+        }
+      }
+    }
+  };
+  return await Parking.find(query).lean();
+};
 
 module.exports = {
   getParking,

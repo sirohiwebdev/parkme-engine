@@ -3,6 +3,7 @@ const url =
   "mongodb+srv://parkmeuser:eOly0wSVCOfco4H8@parkme-m9jt9.mongodb.net/test?retryWrites=true&w=majority";
 mongoose
   .connect(url, {
+    useCreateIndex: true,
     useUnifiedTopology: true,
     useNewUrlParser: true
   })

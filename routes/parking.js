@@ -41,4 +41,50 @@ Router.put("/", (req, res) => {
     });
 });
 
+Router.post("/location", (req, res, next) => {
+  const { location, radius } = req.body;
+  console.log(body);
+
+  console.log(location, radius);
+
+  if (!location) {
+    return res
+      .status(400)
+      .json({ status: status.ERROR, error: "Location is not provided" });
+  }
+  if (!radius) {
+    return res
+      .status(400)
+      .json({ status: status.ERROR, error: "Radius is not provided" });
+  }
+
+  Parking.getParkingByLocation(location, radius)
+    .then(results =>
+      res.status(200).json({ status: status.SUCCESS, data: results })
+    )
+    .catch(err => res.status(400).json({ status: status.ERROR, error: err }));
+});
+
+Router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    return res
+      .status(400)
+      .json({ status: status.ERROR, error: "Parking Id not provided" });
+  }
+
+  Parking.deleteParking(id)
+    .then(data =>
+      res
+        .status(200)
+        .json({ status: status.SUCCESS, data: "Deleted successfully." })
+    )
+    .catch(err => {
+      res.status(400).json({
+        status: status.ERROR,
+        error: err
+      });
+    });
+});
+
 module.exports = Router;

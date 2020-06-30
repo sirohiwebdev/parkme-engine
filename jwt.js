@@ -7,14 +7,24 @@ const secret =
 const createJWTAuth = doc => jwt.sign({ sub: doc._id }, secret);
 
 const verifyJWTAuth = (req, res, next) => {
-  const token = req.headers["authorization"].slice(6).trim();
+  const header = req.headers["authorization"];
+
+  if (!header) {
+    return res.status(400).json({
+      status: status.ERROR,
+      error: "Authorization Header not present"
+    });
+  }
+  const token = header.slice(6).trim();
 
   try {
     const verified = jwt.verify(token, secret);
     next();
-    console.log(verified);
+    // console.log(verified);
   } catch (e) {
-    res.status(400).json({ status: status.ERROR, error: "Invalid Token" });
+    res
+      .status(400)
+      .json({ status: status.ERROR, error: "Invalid Authorization Token" });
   }
 };
 module.exports = {
