@@ -5,26 +5,14 @@ const Parking = require("../models/parking");
 const createHash = require("../lib/hashing").createHash;
 
 Router.get("/:id?", (req, res) => {
-  const { location } = req.body;
-  if (location) {
-    Parking.getParkingByLocation(location)
-      .then(parking => {
-        res.json({ status: status.SUCCESS, data: parking });
-      })
-      .catch(err => {
-        console.log(err);
-        res.json({ status: status.ERROR, error: err });
-      });
-  } else {
-    Parking.getParking(req.params.id)
-      .then(parking => {
-        res.json({ status: status.SUCCESS, data: parking });
-      })
-      .catch(err => {
-        console.log(err);
-        res.json({ status: status.ERROR, error: err });
-      });
-  }
+  Parking.getParking(req.params.id)
+    .then(parking => {
+      res.json({ status: status.SUCCESS, data: parking });
+    })
+    .catch(err => {
+      console.log(err);
+      res.json({ status: status.ERROR, error: err });
+    });
 });
 
 Router.put("/", (req, res) => {
@@ -43,9 +31,6 @@ Router.put("/", (req, res) => {
 
 Router.post("/location", (req, res, next) => {
   const { location, radius } = req.body;
-  console.log(body);
-
-  console.log(location, radius);
 
   if (!location) {
     return res
