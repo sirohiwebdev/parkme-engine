@@ -12,7 +12,7 @@ const slotSchema = mongoose.Schema({
   status: String
 });
 
-const Slot = mongoose.model("Slot", lotSchema);
+const Slot = mongoose.model("Slot", slotSchema);
 
 const createSlot = async slotData => {
   const newSlot = new Slot(slotData);
