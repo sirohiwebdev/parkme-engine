@@ -3,37 +3,87 @@ const Router = express.Router();
 const status = require("../config/constants");
 const User = require("../models/user");
 const createHash = require("../lib/hashing").createHash;
+const { successHandler, errorHandler } = require("../lib/responseHandler");
+const HTTP_STATUS = require("http-status-codes");
+const mongoose = require("mongoose");
 
-Router.get("/", (req, res) => {
-  const mobile = req.body.mobile;
-  User.getUser(mobile)
+Router.get("/:id?", (req, res) => {
+  const id = req.params.id;
+
+  if (!mongoose.isValidObjectId(id)) {
+    errorHandler(res, HTTP_STATUS.BAD_REQUEST, "Invalid Id provided");
+    return;
+  }
+
+  if (id) {
+    User.getUser({ _id: id })
+      .then(user => {
+        const { password, ...userData } = user;
+        successHandler(res, HTTP_STATUS.OK, userData);
+      })
+      .catch(err => {
+        errorHandler(res, HTTP_STATUS.NOT_FOUND, err);
+      });
+  } else {
+    User.getUser()
+      .then(user => {
+        const userData = user.map(u => {
+          const { password, ...userDataWithoutPassword } = u;
+          return userDataWithoutPassword;
+        });
+        successHandler(res, HTTP_STATUS.OK, userData);
+      })
+      .catch(err => {
+        errorHandler(res, HTTP_STATUS.NOT_FOUND, err);
+      });
+  }
+});
+
+Router.put("/:id?", (req, res) => {
+  const id = req.params.id;
+  if (!id) {
+    errorHandler(res, HTTP_STATUS.BAD_REQUEST, "Id not provided");
+    return;
+  }
+  if (!mongoose.isValidObjectId(id)) {
+    errorHandler(res, HTTP_STATUS.BAD_REQUEST, "Invalid Id provided");
+    return;
+  }
+
+  let userdata = req.body;
+  if (userdata.password) {
+    userdata.password = createHash(userdata.password);
+  }
+
+  User.updateUser(id, userdata)
     .then(user => {
-      res.json({ status: status.SUCCESS, data: user });
+      successHandler(res, HTTP_STATUS.OK, {
+        message: "User updated successfully"
+      });
     })
     .catch(err => {
-      res.json({ status: status.ERROR, error: err });
+      errorHandler(res, HTTP_STATUS.NOT_FOUND, err);
     });
 });
 
-Router.put("/", (req, res) => {
-  const { id } = req.body;
-  User.updateUser(id, req.body)
-    .then(user => {
-      res.json({ status: status.SUCCESS, data: user });
-    })
-    .catch(err => {
-      res.json({ status: status.SUCCESS, error: err });
-    });
-});
+Router.delete("/:id?", (req, res) => {
+  const { id } = req.params.id;
+  if (!id) {
+    errorHandler(res, HTTP_STATUS.BAD_REQUEST, "Id not provided");
+    return;
+  }
 
-Router.delete("/", (req, res) => {
-  const { id } = req.body;
+  if (!mongoose.isValidObjectId(id)) {
+    errorHandler(res, HTTP_STATUS.BAD_REQUEST, "Invalid Id provided");
+    return;
+  }
+
   User.deleteUser(id)
     .then(user => {
-      res.json({ status: status.SUCCESS, data: user });
+      successHandler(res, HTTP_STATUS.OK, "User deleted");
     })
     .catch(err => {
-      res.json({ status: status.SUCCESS, error: err });
+      errorHandler(res, HTTP_STATUS.NOT_FOUND, err);
     });
 });
 
