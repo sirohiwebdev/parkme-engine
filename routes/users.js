@@ -1,6 +1,5 @@
 const express = require("express");
 const Router = express.Router();
-const status = require("../config/constants");
 const User = require("../models/user");
 const createHash = require("../lib/hashing").createHash;
 const { successHandler, errorHandler } = require("../lib/responseHandler");
@@ -19,7 +18,7 @@ Router.get("/:id?", (req, res) => {
     User.getUser({ _id: id })
       .then(user => {
         const { password, ...userData } = user;
-        successHandler(res, HTTP_STATUS.OK, userData);
+        successHandler(res, HTTP_STATUS.OK, { data: userData });
       })
       .catch(err => {
         errorHandler(res, HTTP_STATUS.NOT_FOUND, err);
@@ -31,7 +30,7 @@ Router.get("/:id?", (req, res) => {
           const { password, ...userDataWithoutPassword } = u;
           return userDataWithoutPassword;
         });
-        successHandler(res, HTTP_STATUS.OK, userData);
+        successHandler(res, HTTP_STATUS.OK, { data: userData });
       })
       .catch(err => {
         errorHandler(res, HTTP_STATUS.NOT_FOUND, err);

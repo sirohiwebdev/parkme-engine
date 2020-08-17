@@ -39,16 +39,13 @@ const parkingSchema = new Schema({
 });
 
 parkingSchema.index({ location: "2dsphere" });
-
 //Create parking Model
 const Parking = mongoose.model("Parking", parkingSchema);
-
 // Add Parking to DB
 const addParking = async parkingData => {
   const newParking = new Parking(parkingData);
   return await newParking.save();
 };
-
 // Read Parking Data from DB
 const getParking = async (parkingID, mobile) => {
   if (parkingID) {
@@ -57,20 +54,16 @@ const getParking = async (parkingID, mobile) => {
   if (mobile) {
     return await Parking.findOne({ mobile: mobile }).lean();
   }
-
   return await Parking.find().lean();
 };
-
 // Update Parking Data
 const updateParking = async (parkingID, data) => {
   return await Parking.findByIdAndUpdate({ _id: parkingID }, data);
 };
-
 // Delete Parking from DB
 const deleteParking = async parkingID => {
   return await Parking.findByIdAndDelete(parkingID);
 };
-
 //Get Nearby parking
 const getParkingByLocation = async (location, radius = 5000) => {
   console.log("Reached");

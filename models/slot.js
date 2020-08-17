@@ -2,14 +2,14 @@ const mongoose = require("./index");
 
 const slotSchema = mongoose.Schema({
   timing: {
-    start: mongoose.SchemaTypes.Date,
-    end: mongoose.SchemaTypes.Date
+    from: mongoose.SchemaTypes.Date,
+    to: mongoose.SchemaTypes.Date
   },
   lot: { type: String, required: true },
   car: { type: String, required: true },
   parking_id: mongoose.SchemaTypes.ObjectId,
   user_id: mongoose.SchemaTypes.ObjectId,
-  status: String
+  status: { type: String, default: "Booked" }
 });
 
 const Slot = mongoose.model("Slot", slotSchema);
@@ -20,16 +20,21 @@ const createSlot = async slotData => {
 };
 
 const getSlot = async slotId => {
-  if (slotId) return await Slot.findOne({ _id: id });
-  return await Slot.find();
+  if (slotId) return await Slot.findOne({ _id: slotId }).lean();
+  return await Slot.find().lean();
 };
 
 const updateSlot = async (slotId, data) => {
-  return await Slot.findByIdAndUpdate({ _id: slotId }, data);
+  return await Slot.findByIdAndUpdate({ _id: slotId }, data).lean();
 };
 
 const deleteSlot = async (slotId, data) => {
-  return await Slot.findByIdAndDelete({ _id: slotId });
+  return await Slot.findByIdAndDelete({ _id: slotId }).lean();
 };
 
-module.exports = Slot;
+module.exports = {
+  createSlot,
+  getSlot,
+  updateSlot,
+  deleteSlot
+};
